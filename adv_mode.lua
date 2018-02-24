@@ -10,26 +10,27 @@ local current_weapon = "none"
 
 ---- key bind ----
 
-local ump9_key = 8
-local akm_key = nil
-local m16a4_key = 5
-local m416_key = nil
-local scarl_key = nil
-local uzi_key = nil
+local ump9_key = 1
+local akm_key = 2
+local m16a4_key = 3
+local m416_key = 4
+local scarl_key = 5
+local uzi_key = 6
 
 local set_off_key = 6
 
+local weapon_change = 1
 
 ---- fire key ----
 
 local fire_key = "Pause"
-local mode_switch_key = "capslock"
-
+local mode_switch_key = "numlock"
+local Toggle = "capslock"
 
 ---- ignore key ----
 ---- can use "lalt", "ralt", "alt"  "lshift", "rshift", "shift"  "lctrl", "rctrl", "ctrl"
 
-local ignore_key = "lshift"
+local ignore_key = "lalt"
 
 --- Sensitivity in Game
 --- default is 50.0
@@ -166,7 +167,7 @@ end
 
 
 function OnEvent(event, arg)
-    OutputLogMessage("event = %s, arg = %d\n", event, arg)
+    OutputLogMessage("event = %s, arg = %d, current_weapon = %s\n, weapon_change =%f\n", event, arg, current_weapon, weapon_change)
     if (event == "PROFILE_ACTIVATED") then
         EnablePrimaryMouseButtonEvents(true)
     elseif event == "PROFILE_DEACTIVATED" then
@@ -176,21 +177,34 @@ function OnEvent(event, arg)
         ReleaseMouseButton(1)
     end
 
-    if (event == "MOUSE_BUTTON_PRESSED" and arg == set_off_key) then
+   if (event == "MOUSE_BUTTON_PRESSED" and arg == 4) then
+   else
+	weapon_change = weapon_change - 1
+    end
+   if (event == "MOUSE_BUTTON_PRESSED" and arg == 5) then
+   else
+	weapon_change = weapon_change + 1
+    end
+   if weapon_change > 6 then weapon_change = 1
+    end
+   if weapon_change < 1 then weapon_change = 6
+    end
+   if not IsKeyLockOn (Toggle) then
         current_weapon = "none"
-    elseif (event == "MOUSE_BUTTON_PRESSED" and arg == akm_key) then
+    elseif (weapon_change == akm_key) then
         current_weapon = "akm"
-    elseif (event == "MOUSE_BUTTON_PRESSED" and arg == m16a4_key) then
+    elseif (weapon_change == m16a4_key) then
         current_weapon = "m16a4"
-    elseif (event == "MOUSE_BUTTON_PRESSED" and arg == m416_key) then
+    elseif (weapon_change == m416_key) then
         current_weapon = "m416"
-    elseif (event == "MOUSE_BUTTON_PRESSED" and arg == ump9_key) then
+    elseif (weapon_change == ump9_key) then
         current_weapon = "ump9"
-    elseif (event == "MOUSE_BUTTON_PRESSED" and arg == uzi_key) then
+    elseif (weapon_change == uzi_key) then
         current_weapon = "uzi"
-    elseif (event == "MOUSE_BUTTON_PRESSED" and arg == scarl_key) then
+    elseif (weapon_change == scarl_key) then
         current_weapon = "scarl"
-    elseif (event == "MOUSE_BUTTON_PRESSED" and arg == 1) then
+    end
+  if (event == "MOUSE_BUTTON_PRESSED" and arg == 1) then
         -- button 1 : Shoot
         if ((current_weapon == "none") or IsModifierPressed(ignore_key)) then
             PressKey(fire_key)
